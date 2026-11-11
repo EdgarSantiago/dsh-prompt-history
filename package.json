@@ -1,0 +1,19 @@
+{
+  "name": "@local/dsh-prompt-history",
+  "version": "0.1.9",
+  "private": true,
+  "type": "module",
+  "description": "Search previous human prompts and reuse their text safely in the Harness composer.",
+  "license": "MIT",
+  "repository": {"type": "git", "url": "https://github.com/EdgarSantiago/dsh-prompt-history.git"},
+  "homepage": "https://github.com/EdgarSantiago/dsh-prompt-history#readme",
+  "bugs": {"url": "https://github.com/EdgarSantiago/dsh-prompt-history/issues"},
+  "keywords": ["dsh-plugin", "deepseek-harness", "prompt-history", "sessions", "productivity"],
+  "exports": {".": "./index.js", "./client": "./lib/client.js", "./locale/*.json": "./locale/*.json", "./icon": "./icon.svg"},
+  "files": ["index.js", "projection.js", "lib/client.js", "cordis.patch.yml", "locale/*.json", "icon.svg", "docs/images/*.png", "README.md", "LICENSE"],
+  "engines": {"node": ">=18", "dsh": "0.2.2-rc.1"},
+  "scripts": {"build": "node build.mjs", "check": "node --check index.js && node --check projection.js && node --check client.js && node --check history-reader.js && node --check presentation.js && node --check dismiss.js && node --check reuse.js && node --check presence.js && node --check legacy-notice.js && node --check lib/client.js", "test": "node --test *.test.js"},
+  "dependencies": {"zod": "4.4.3"},
+  "devDependencies": {"esbuild": "0.28.2", "@deepseek-ai/cordis": "4.1.0"},
+  "dsh": {"bundle": {"patch": "./cordis.patch.yml"}, "client": {"platform": "web", "immediately": true, "external": ["react-dom"], "inject": ["@deepseek-ai/dsh-api-remotes", "@deepseek-ai/dsh-api-session-controller", "@deepseek-ai/dsh-client-ui-conversation", "@deepseek-ai/dsh-client-locale"]}}
+}

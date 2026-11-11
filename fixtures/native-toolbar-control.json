@@ -1,0 +1,17 @@
+{
+  "source": "Harness 0.2.2-rc.1 composer toolbar control",
+  "rules": [
+    {
+      "selector": ".control",
+      "declarations": "corner-shape:round;background:var(--dsw-specific-selector);width:28px;height:28px;color:var(--dsw-alias-label-primary);cursor:pointer;border:none;border-radius:999px;flex:none;place-items:center;display:grid"
+    },
+    {
+      "selector": ".control:hover:not(:disabled)",
+      "declarations": "background:var(--dsw-alias-interactive-bg-hover-solid)"
+    },
+    {
+      "selector": ".control:disabled",
+      "declarations": "opacity:.5;cursor:default"
+    }
+  ]
+}
