@@ -10,7 +10,7 @@ The sections below follow the [dsh-plugin.org submission template](https://dsh-p
 
 [EdgarSantiago/dsh-prompt-history](https://github.com/EdgarSantiago/dsh-prompt-history)
 
-Public source repository maintained by [EdgarSantiago](https://github.com/EdgarSantiago). Package: `@local/dsh-prompt-history`, version `0.2.3`. The existing package and Slot identifiers are retained for compatibility with local installations. GitHub installation follows the published `main` branch.
+Public source repository maintained by [EdgarSantiago](https://github.com/EdgarSantiago). Package: `@local/dsh-prompt-history`, version `0.2.4`. The existing package and Slot identifiers are retained for compatibility with local installations. GitHub installation follows the published `main` branch.
 
 ### One-line value
 
@@ -48,10 +48,12 @@ This is a **GitHub-only source release**, not an npm release. The `private: true
 | Profiles | Web and Desktop |
 | Runtime | Node.js 18+ |
 | Browser | Modern browser with Popover API support |
-| Languages | English and Portuguese, following Harness |
+| Languages | English, Portuguese, Chinese (Simplified), Japanese, Spanish, French, German, and Russian, following Harness Settings → Language (`pt-BR` aliases Portuguese) |
 | Verified platform | macOS; other platforms have not been visually certified |
 
 The interface uses native Slots and Harness's React, without an iframe or a separate React installation. Other Harness versions are not declared compatible. The `0.2.2-rc.2` audit checked the shipped projection, composer, and Slot contracts; the custom menu explicitly excludes its visible box from macOS window dragging. Live visual interaction still needs confirmation after installation.
+
+Controls, accessible names, status/error feedback, and plugin metadata cover all eight Harness languages. Changing **Settings → Language** updates the launcher and open panel reactively, including open menus, confirmations, existing feedback, and locale-formatted dates/times. Open menus adjust to translated label widths without resetting keyboard focus. English remains the native translation fallback; unsupported date locales also fall back to English. Prompt text and conversation titles are user content and are never translated.
 
 ### License
 
@@ -137,7 +139,7 @@ pnpm test
 
 For a local development installation, run `dsh plugin --profile desktop add "$(pwd)"` from the project root after building (or use `--profile web`). Manage updates through the Harness plugin manager.
 
-The Client is bundled with esbuild; there is no install script. Tests use Node's built-in runner, synthetic data, real Date/Intl, and real Cordis Context/Service instances. They cover human sources, bounds, ACLs, cancellation, draft confirmation, local dates, year boundaries, daylight-saving transitions, outside-pointer dismissal, stable-key history navigation, captured insertion spans, native quote/paste refusal, panel keyboard integration contracts, and composer-opening policy/listener lifecycle using real Node EventTarget/Event instances. DOM markers were checked against installed Harness source; the browser DOM probe and visual keyboard interactions still require a manual check in the running app. Contract tests do not replace interaction checks in Harness.
+The Client is bundled with esbuild; there is no install script. Tests use Node's built-in runner, synthetic data, real Date/Intl, and real Cordis Context/Service instances. They cover human sources, bounds, ACLs, cancellation, draft confirmation, local dates, year boundaries, daylight-saving transitions, outside-pointer dismissal, stable-key history navigation, captured insertion spans, native quote/paste refusal, panel keyboard integration contracts, and composer-opening policy/listener lifecycle using real Node EventTarget/Event instances. Localization tests verify complete key and named-placeholder parity, distributable metadata, shared `pt-BR` registration, the English fallback catalog, registration cleanup in both source and the prebuilt Client, open-menu resize/focus contracts, and real Date/Intl formatting and malformed-locale fallback across all supported languages. They check the locale subscription and deferred feedback-translation contracts without reimplementing the host translation runtime or mocking React hooks. DOM markers were checked against installed Harness source; live Language switching (including open menus, confirmation, and feedback), the browser DOM probe, and visual keyboard interactions still require a manual check in the running app. Contract tests do not replace interaction checks in Harness.
 
 ### Pre-submission checklist
 

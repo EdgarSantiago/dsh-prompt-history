@@ -1,16 +1,20 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { en,pt } from './strings.js'
+import * as messages from './strings.js'
 import { PROJECTION_KEY } from './projection.js'
 import { HISTORY_KEY } from './history-reader.js'
 const read=name=>readFileSync(new URL(name,import.meta.url),'utf8')
 const client=read('client.js'),reader=read('history-reader.js'),reuse=read('reuse.js')
 
-test('English and Portuguese labels are complete and cover UI controls',()=>{
- assert.deepEqual(Object.keys(en).sort(),Object.keys(pt).sort())
- for(const value of Object.values(pt))assert.ok(typeof value==='string'&&value.trim())
- for(const [,key]of client.matchAll(/\bt\('([^']+)'/g))assert.ok(en[key],key)
+test('all eight language catalogs are complete and cover UI controls',()=>{
+ const keys=Object.keys(messages.en).sort()
+ assert.deepEqual(Object.keys(messages).sort(),['de','en','es','fr','ja','pt','ru','zh'])
+ for(const [locale,dict] of Object.entries(messages)){
+  assert.deepEqual(Object.keys(dict).sort(),keys,locale)
+  for(const value of Object.values(dict))assert.ok(typeof value==='string'&&value.trim(),locale)
+ }
+ for(const [,key]of client.matchAll(/\bt\('([^']+)'/g))assert.ok(messages.en[key],key)
 })
 test('projection key and bundled Client entry match the manifest',()=>{
  assert.equal(HISTORY_KEY,PROJECTION_KEY)

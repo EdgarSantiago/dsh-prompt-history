@@ -1,6 +1,6 @@
 import { createHistoryReader, filterPrompts } from './history-reader.js'
 import { reusePrompt } from './reuse.js'
-import { en, pt } from './strings.js'
+import { en, pt, zh, ja, es, fr, de, ru } from './strings.js'
 import { clearLegacyHistoryNotice } from './legacy-notice.js'
 import { createPresenceDriver, ENTER_MS, EXIT_MS } from './presence.js'
 import { groupPromptsByDay, promptTime } from './presentation.js'
@@ -59,7 +59,8 @@ window.__ModuleLoader__.load({id:'@local/dsh-prompt-history',factory:require=>{
   function apply(ctx){
     const ns='local-prompt-history',stores=new Map(),boundaries=new Map(),launchers=new Map()
     let openRequestId=0
-    ctx.effect(()=>ctx.locale.register(ns,'en',en));ctx.effect(()=>ctx.locale.register(ns,'pt',pt));ctx.effect(()=>ctx.locale.register(ns,'pt-BR',pt))
+    // English remains the native fallback; pt-BR shares the Portuguese dictionary.
+    for(const [locale,messages] of Object.entries({en,pt,'pt-BR':pt,zh,ja,es,fr,de,ru}))ctx.effect(()=>ctx.locale.register(ns,locale,messages))
     const t=ctx.locale.bind(ns),forSession=id=>{if(!stores.has(id))stores.set(id,observable({open:false,instant:false}));return stores.get(id)}
     const useLocale=()=>useSyncExternalStore(fn=>ctx.locale.subscribe(fn),()=>ctx.locale.getSnapshot())
     const inputFor=id=>{const actx=ctx.sessions.scope(id);return actx?ctx.conversation.input.for(actx):null}
@@ -111,8 +112,9 @@ window.__ModuleLoader__.load({id:'@local/dsh-prompt-history',factory:require=>{
         const box=triggerRef.current.getBoundingClientRect(),size=menuRef.current.getBoundingClientRect()
         const left=point?point.x:box.right-size.width,top=point?point.y:box.bottom+6
         setPosition({left:Math.max(8,Math.min(left,window.innerWidth-size.width-8)),top:Math.max(8,Math.min(top,window.innerHeight-size.height-8))})
-        menuRef.current.querySelector('button:not(:disabled)')?.focus({preventScroll:true})
-      },[menuOpen,point])
+      },[menuOpen,point,locale])
+      // Translation can resize an open menu; reposition it without moving keyboard focus.
+      useLayoutEffect(()=>{if(menuOpen)menuRef.current?.querySelector('button:not(:disabled)')?.focus({preventScroll:true})},[menuOpen])
       useEffect(()=>{if(!menuOpen)return;const dismiss=()=>hideMenu();window.addEventListener('resize',dismiss);window.addEventListener('scroll',dismiss,true);return()=>{window.removeEventListener('resize',dismiss);window.removeEventListener('scroll',dismiss,true)}},[menuOpen])
       function openMenu(position=null){
         if(!active)return
@@ -124,7 +126,7 @@ window.__ModuleLoader__.load({id:'@local/dsh-prompt-history',factory:require=>{
         if(event.key==='Escape'){event.stopPropagation();event.preventDefault();hideMenu();triggerRef.current?.focus({preventScroll:true})}
         else if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){event.preventDefault();event.stopPropagation();const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(at+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length;buttons[next]?.focus({preventScroll:true})}
       }
-      async function copy(){try{await navigator.clipboard.writeText(item.text);if(alive.current)onFeedback(t('copied'))}catch{if(alive.current)onFeedback(t('copyFailed'))}}
+      async function copy(){try{await navigator.clipboard.writeText(item.text);if(alive.current)onFeedback('copied')}catch{if(alive.current)onFeedback('copyFailed')}}
       const instant=new Date(item.time),validDate=!Number.isNaN(instant.getTime())
       const origin=()=>{hideMenu();onOrigin();workspace.openSession(item.sessionId)}
       return h('article',{ref:rowRef,className:'rph-item',tabIndex:0,'data-selected':selected,'aria-current':selected?'true':undefined,'aria-labelledby':id+'-text',onFocus:event=>{if(event.target===event.currentTarget)onSelect(item.key)},onContextMenu:event=>{
@@ -194,29 +196,29 @@ window.__ModuleLoader__.load({id:'@local/dsh-prompt-history',factory:require=>{
         if(next.index>=0)setShown(count=>Math.max(count,Math.ceil((next.index+1)/40)*40))
       }
       function reverseSearch(){setReverse(true);browse(reverse?'older':'first');searchRef.current?.focus()}
-      function capture(){try{return props.inputActions.captureInsertion()}catch{setFeedback(t('actionUnavailable'));return null}}
+      function capture(){try{return props.inputActions.captureInsertion()}catch{setFeedback('actionUnavailable');return null}}
       function editorAction(kind,item,span){
         const input=inputFor(props.sessionId)
-        if(!input){setFeedback(t('busy'));return}
+        if(!input){setFeedback('busy');return}
         try{
           const result=(kind==='quote'?quoteHistoryPrompt:pasteHistoryPrompt)(input,props.inputActions,item,span)
           if(result.kind==='applied'){setPending(null);close(props.sessionId,true);return}
           const keys={busy:'busy',changed:'changed',bang:'bang',truncated:'truncated',empty:'invalid',referenceText:'referenceText',unavailable:'actionUnavailable'}
-          setFeedback(t(keys[result.reason]||'invalid'))
-        }catch{setFeedback(t('actionFailed'))}
+          setFeedback(keys[result.reason]||'invalid')
+        }catch{setFeedback('actionFailed')}
       }
       function reuse(item,revision){
         setFeedback('')
         const input=inputFor(props.sessionId)
-        if(!input){setFeedback(t('busy'));return}
+        if(!input){setFeedback('busy');return}
         try{
           const result=reusePrompt(input,props.inputActions,item,revision)
           if(result.kind==='confirm'){setPending({item,revision:result.revision});return}
           setPending(null)
           if(result.kind==='applied'){close(props.sessionId,true);return}
           const keys={busy:'busy',attachments:'draftAttachments',references:'references',changed:'changed',bang:'bang',truncated:'truncated',empty:'invalid',referenceText:'referenceText'}
-          setFeedback(t(keys[result.reason]||'invalid'))
-        }catch{setPending(null);setFeedback(t('changed'))}
+          setFeedback(keys[result.reason]||'invalid')
+        }catch{setPending(null);setFeedback('changed')}
       }
       const unavailable=state.issues.some(issue=>['projection-unavailable','migration-required'].includes(issue.code))
       return h('section',{ref:panelRef,className:'rph-panel','data-phase':props.phase,'aria-hidden':!props.open,role:'region','aria-label':t('title'),onCompositionStart:()=>{composition.current.active=true},onCompositionEnd:()=>{composition.current={active:false,ended:performance.now()}},onKeyDown:event=>{
@@ -235,7 +237,7 @@ window.__ModuleLoader__.load({id:'@local/dsh-prompt-history',factory:require=>{
         h('div',{className:'rph-nav'},h('p',{id:keysId,role:'status','aria-live':'polite'},t(reverse?'reverseSearch':'panelKeys'),selected?' · '+(selectedIndex+1)+' / '+filtered.length:''),h('button',{type:'button','aria-pressed':reverse,onClick:reverseSearch},t('reverseSearch'),' · Ctrl R'),h('button',{type:'button',disabled:!filtered.length||selectedIndex===filtered.length-1,onClick:()=>browse('older')},'↓ ',t('older')),h('button',{type:'button',disabled:selectedIndex<=0,onClick:()=>browse('newer')},'↑ ',t('newer'))),
         scope==='current'&&currentItem&&h('div',{className:'rph-context'},h('span',null,t('conversation'),':'),workspace?h('button',{type:'button',className:'rph-conversation-link',title:currentItem.title,onClick:()=>{close(props.sessionId,true);workspace.openSession(props.sessionId)}},currentItem.title,icon('arrow',12)):h('span',null,currentItem.title)),
         pending&&h('div',{className:'rph-confirm',role:'group','aria-label':t('confirm')},h('p',null,t('confirm')),h('button',{type:'button',className:'rph-primary',onClick:()=>reuse(pending.item,pending.revision)},t('replace')),h('button',{type:'button',onClick:()=>setPending(null)},t('cancel'))),
-        feedback&&h('p',{className:'rph-status',role:'status'},feedback),
+        feedback&&h('p',{className:'rph-status',role:'status'},t(feedback)),
         state.issues.length>0&&h('p',{className:'rph-status',role:'alert'},t(state.phase==='error'?'failed':unavailable?'migration':'partial'),' (',state.issues.length,')'),
         h('div',{className:'rph-list','data-ready':state.phase==='ready','aria-busy':state.phase==='loading'},groups.map((group,index)=>h('section',{className:'rph-day',key:group.key+':'+index,'aria-label':group.label},h('h3',{className:'rph-day-title'},group.label),group.items.map(item=>h(Card,{key:item.key,item,onReuse:reuse,onCapture:capture,onEditorAction:editorAction,onNavigate:browse,onSelect:setSelectedKey,selected:item.key===selectedKey,focusSelected:focusSelection,locale:locale.active,onFeedback:setFeedback,onOrigin:()=>close(props.sessionId,true),showConversation:scope!=='current',active:props.open})))),
           filtered.length>shown&&h('button',{type:'button',className:'rph-more',onClick:()=>setShown(n=>n+40)},t('morePrompts')),
