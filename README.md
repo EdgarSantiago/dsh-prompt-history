@@ -22,7 +22,7 @@ Adds searchable human-prompt history to Harness so you can copy or reuse previou
 
 ### Install command
 
-Requires **DeepSeek Harness `0.2.2-rc.1`** and **Node.js 18+**. Choose the profile you use:
+Requires **DeepSeek Harness `0.2.2-rc.1` or `0.2.2-rc.2`** and **Node.js 18+**. Choose the profile you use:
 
 **Desktop**
 
@@ -44,14 +44,14 @@ This is a **GitHub-only source release**, not an npm release. The `private: true
 
 | Item | Declared compatibility |
 | --- | --- |
-| DeepSeek Harness | `0.2.2-rc.1` |
+| DeepSeek Harness | `0.2.2-rc.1` or `0.2.2-rc.2` |
 | Profiles | Web and Desktop |
 | Runtime | Node.js 18+ |
 | Browser | Modern browser with Popover API support |
 | Languages | English and Portuguese, following Harness |
 | Verified platform | macOS; other platforms have not been visually certified |
 
-The interface uses native Slots and Harness's React, without an iframe or a separate React installation. Other Harness versions are not declared compatible.
+The interface uses native Slots and Harness's React, without an iframe or a separate React installation. Other Harness versions are not declared compatible. The `0.2.2-rc.2` audit checked the shipped projection, composer, and Slot contracts; the custom menu explicitly excludes its visible box from macOS window dragging. Live visual interaction still needs confirmation after installation.
 
 ### License
 

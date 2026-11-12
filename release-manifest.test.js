@@ -9,7 +9,7 @@ test('public repository metadata preserves the installed identity and npm public
   assert.equal(manifest.name,'@local/dsh-prompt-history')
   assert.equal(manifest.private,true)
   assert.equal(manifest.license,'MIT')
-  assert.equal(manifest.engines.dsh,'0.2.2-rc.1')
+  assert.equal(manifest.engines.dsh,'0.2.2-rc.1 || 0.2.2-rc.2')
   assert.equal(manifest.repository.url,'https://github.com/EdgarSantiago/dsh-prompt-history.git')
   assert.ok(manifest.keywords.includes('dsh-plugin'))
   assert.ok(read('client.js').includes("id:'"+manifest.name+"'"))
