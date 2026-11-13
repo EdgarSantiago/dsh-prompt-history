@@ -9,7 +9,7 @@ test('public repository metadata preserves the installed identity and npm public
   assert.equal(manifest.name,'@local/dsh-prompt-history')
   assert.equal(manifest.private,true)
   assert.equal(manifest.license,'MIT')
-  assert.equal(manifest.engines.dsh,'0.2.2-rc.1 || 0.2.2-rc.2')
+  assert.equal(manifest.engines.dsh,'>=0.2.2-rc.1 <0.2.3-0')
   assert.equal(manifest.repository.url,'https://github.com/EdgarSantiago/dsh-prompt-history.git')
   assert.ok(manifest.keywords.includes('dsh-plugin'))
   assert.ok(read('client.js').includes("id:'"+manifest.name+"'"))
@@ -20,6 +20,7 @@ test('public repository metadata preserves the installed identity and npm public
 })
 test('public README uses real GitHub install commands and retains catalog disclosures',()=>{
   const text=read('README.md')
+  assert.ok(text.includes(manifest.engines.dsh),'README declares the same controlled compatibility range')
   for(const profile of ['web','desktop'])assert.ok(text.includes('dsh plugin --profile '+profile+' add github:EdgarSantiago/dsh-prompt-history'))
   for(const value of ['Sessions & Messages','0.2.2-rc.1','Permissions and privacy','not an npm release','https://dsh-plugin.org/submit'])assert.ok(text.includes(value),value)
   assert.ok(!text.includes('Publication pending'))

@@ -22,7 +22,7 @@ Adds searchable human-prompt history to Harness so you can copy or reuse previou
 
 ### Install command
 
-Requires **DeepSeek Harness `0.2.2-rc.1` or `0.2.2-rc.2`** and **Node.js 18+**. Choose the profile you use:
+Requires **DeepSeek Harness `>=0.2.2-rc.1 <0.2.3-0`** and **Node.js 18+**. Choose the profile you use:
 
 **Desktop**
 
@@ -44,14 +44,14 @@ This is a **GitHub-only source release**, not an npm release. The `private: true
 
 | Item | Declared compatibility |
 | --- | --- |
-| DeepSeek Harness | `0.2.2-rc.1` or `0.2.2-rc.2` |
+| DeepSeek Harness | `>=0.2.2-rc.1 <0.2.3-0` |
 | Profiles | Web and Desktop |
 | Runtime | Node.js 18+ |
 | Browser | Modern browser with Popover API support |
 | Languages | English, Portuguese, Chinese (Simplified), Japanese, Spanish, French, German, and Russian, following Harness Settings → Language (`pt-BR` aliases Portuguese) |
 | Verified platform | macOS; other platforms have not been visually certified |
 
-The interface uses native Slots and Harness's React, without an iframe or a separate React installation. Other Harness versions are not declared compatible. The `0.2.2-rc.2` audit checked the shipped projection, composer, and Slot contracts; the custom menu explicitly excludes its visible box from macOS window dragging. Live visual interaction still needs confirmation after installation.
+The interface uses native Slots and Harness's React, without an iframe or a separate React installation. The user-authorized compatibility range admits 0.2.2 from rc.1 onward, including stable 0.2.2, but blocks even 0.2.3 prereleases. Later 0.2.2 candidates are allowed by policy, not individually certified. The earlier rc.2 audit checked shipped projection, composer, and Slot contracts; relevant installed rc.3 contracts were inspected for this update. The custom menu explicitly excludes its visible box from macOS window dragging. Live visual interaction still needs confirmation after installation.
 
 Controls, accessible names, status/error feedback, and plugin metadata cover all eight Harness languages. Changing **Settings → Language** updates the launcher and open panel reactively, including open menus, confirmations, existing feedback, and locale-formatted dates/times. Open menus adjust to translated label widths without resetting keyboard focus. English remains the native translation fallback; unsupported date locales also fall back to English. Prompt text and conversation titles are user content and are never translated.
 
